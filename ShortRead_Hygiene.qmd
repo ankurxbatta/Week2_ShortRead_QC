@@ -61,3 +61,37 @@ qc_data <- qc_aggregate("fastqc_results")
 
 qc_report("fastqc_results", result.file = "multi-qc-report", interpret = TRUE)
 ```
+
+Cleanup
+
+```{r}
+# 1. Locate the example file
+example_file <- system.file(package="ShortRead", "extdata/E-MTAB-1147", "ERR127302_1_subset.fastq.gz")
+
+# 2. Define where the output should go
+clean_example <- "clean_example.fastq.gz"
+
+# 3. Run the Trimmer
+# truncationQuality = 20: Chop off bases from the end if quality < 20
+# minReadLength = 50: Throw away the read if it ends up shorter than 50bp
+preprocessReads(filename = example_file,
+                outputFilename = clean_example,
+                truncateEndBases = 10,
+                minLength = 50)
+```
+
+```{r}
+# List only the fastq files with the correct path
+fq_list <- paste("data/raw_reads/MiSeq_SOP/", 
+                 list.files("data/raw_reads/MiSeq_SOP", pattern = "\\.fastq$"), 
+                 sep = "")
+
+out_list <- paste("data/processed_reads/",
+                  list.files("data/raw_reads/MiSeq_SOP", pattern="\\.fastq$"),
+                  "_processed.fastq", sep="")
+
+preprocessReads(filename = fq_list,
+                outputFilename = out_list,
+                truncateEndBases = 50,
+                minLength = 200)
+```
