@@ -12,6 +12,7 @@ library(Rqc)
 library(ShortRead)
 library(QuasR)
 library(ggplot2)
+library(fastqcr)
 
 ```
 
@@ -42,4 +43,21 @@ p_base
 p_freq <- rqcReadFrequencyPlot(qc_result[1:3])
 ggsave("figures/read_frequency.png", plot = p_freq)
 p_freq
+```
+
+```{bash}
+# 1. Create the output directory inside your project
+mkdir -p fastqc_results
+
+# 2. Run FastQC
+# Replace [PASTE_PATH_HERE] with the path you copied from R
+fastqc data/raw_reads/MiSeq_SOP/*.fastq -o fastqc_results/
+```
+
+Aggregate
+
+```{r}
+qc_data <- qc_aggregate("fastqc_results")
+
+qc_report("fastqc_results", result.file = "multi-qc-report", interpret = TRUE)
 ```
